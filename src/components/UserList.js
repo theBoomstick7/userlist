@@ -4,10 +4,16 @@ import * as userService from '../services/userService'
 
 import { useState } from 'react'
 import { UserDetails } from './UserDetails'
-export const UserList = ({users}) => {
+import { CreateUser } from './CreateUser'
+
+
+export const UserList = ({
+    users,
+    onUserCreateSubmit
+}) => {
 
 const [selectedUser, setSelectedUser] = useState(null)
-
+const [showAddUser, setShowAddUser] = useState(null)
     const onInfoClick = async (userId) => {
 
         const user = await userService.getOne(userId);
@@ -16,12 +22,16 @@ const [selectedUser, setSelectedUser] = useState(null)
 
     const onClose = () => {
         setSelectedUser(null)
+        setShowAddUser(false)
     }
-
+    const onAddUserClick = () => {
+        setShowAddUser(true)
+    }
     return (
 
         <>
             {selectedUser && <UserDetails {...selectedUser} onClose = {onClose} />}
+            {showAddUser && <CreateUser onClose = {onClose} onUserCreateSubmit={onUserCreateSubmit} />}
             <div className="table-wrapper">
             {/* <!-- Overlap components  --> */}
 
@@ -154,6 +164,7 @@ const [selectedUser, setSelectedUser] = useState(null)
             </tbody>
             </table>
             </div>
+            <button className="btn-add btn"  onClick={onAddUserClick}>Add new user</button>
         </>
     )
 }

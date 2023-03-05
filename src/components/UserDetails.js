@@ -7,7 +7,6 @@ export const UserDetails = ({
     createdAt,
     phoneNumber,
     updatedAt,
-    onInfoClick,
     address,
     onClose
 }) => {
