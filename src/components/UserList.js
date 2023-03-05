@@ -5,15 +5,21 @@ import * as userService from '../services/userService'
 import { useState } from 'react'
 import { UserDetails } from './UserDetails'
 import { CreateUser } from './CreateUser'
+import { DeleteUser } from './DeleteUser'
 
 
 export const UserList = ({
     users,
-    onUserCreateSubmit
+    onUserCreateSubmit,
+    onUserDelete
 }) => {
 
-const [selectedUser, setSelectedUser] = useState(null)
-const [showAddUser, setShowAddUser] = useState(null)
+const [selectedUser, setSelectedUser] = useState(null);
+const [showDeleteUserBox, setShowDeleteUserBox] = useState(false);
+const [showAddUser, setShowAddUser] = useState(false);
+
+
+
     const onInfoClick = async (userId) => {
 
         const user = await userService.getOne(userId);
@@ -23,15 +29,31 @@ const [showAddUser, setShowAddUser] = useState(null)
     const onClose = () => {
         setSelectedUser(null)
         setShowAddUser(false)
+        setShowDeleteUserBox(false)
     }
     const onAddUserClick = () => {
         setShowAddUser(true)
+    }
+
+    const onUserCreateSubmitHandler = (e) => {
+        onUserCreateSubmit(e);
+        setShowAddUser(false)
+    }
+
+    const onDeleteClick = (userId) => {
+        setShowDeleteUserBox(userId);
+    }
+
+    const onDeleteHandler = () => {
+        onUserDelete(showDeleteUserBox);
+        onClose();
     }
     return (
 
         <>
             {selectedUser && <UserDetails {...selectedUser} onClose = {onClose} />}
-            {showAddUser && <CreateUser onClose = {onClose} onUserCreateSubmit={onUserCreateSubmit} />}
+            {showAddUser && <CreateUser onClose = {onClose} onUserCreateSubmit={onUserCreateSubmitHandler} />}
+            {showDeleteUserBox && <DeleteUser onClose = {onClose} onDelete = {onDeleteHandler}/>}
             <div className="table-wrapper">
             {/* <!-- Overlap components  --> */}
 
@@ -160,7 +182,13 @@ const [showAddUser, setShowAddUser] = useState(null)
             </thead>
             <tbody>
                 {/* <!-- Table row component --> */}
-                {users.map(u => <User key = {u._id} {...u} onInfoClick = {onInfoClick}/>)}
+                {users.map(u => 
+                <User 
+                    key = {u._id} 
+                    {...u} 
+                    onInfoClick = {onInfoClick}
+                    onDeleteClick = {onDeleteClick}
+                />)}
             </tbody>
             </table>
             </div>
